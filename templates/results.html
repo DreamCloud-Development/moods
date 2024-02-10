@@ -1,0 +1,104 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+
+        <h2 class="text-2xl font-bold mb-4">Search results for "{{ query }}"</h2>
+
+        {% if tracks %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+
+            {% for track in tracks %}
+
+            <div class="card card-compact card-side bg-base-300 shadow-xl">
+                <audio id="{{ track.id }}" src="https://audius-discovery-6.cultur3stake.com/v1/tracks/{{ track.id }}/stream"></audio>
+
+                <figure>
+                    <img src="{{ track.artwork['480x480'] }}" alt="{{ track.title }}" class="ml-4 w-36 h-36 rounded">
+                </figure>
+
+                <div class="card-body">
+                    <h2 class="font-bold text-lg">{{ track.title }}</h2>
+                    <h3 class="font-bold text-sm">{{ track.user.handle }}</h3>
+                    <div class="card-actions justify-end">
+                        <a class="btn btn-ghost px-3" href="https://audius.co{{ track.permalink }}" target="_blank">🔗</a>
+                        <button class="btn btn-primary" onclick="playTrack('{{ track.id }}')">Play</button>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+        <p>No results found</p>
+        {% endif %}
+
+    <div id="track-info" class="inset-x-1/4 flex hidden z-20 fixed bottom-0 my-4 mx-12 mx-auto rounded p-4 bg-primary">
+        <div>
+            <p id="track-name"></p>
+            <p id="artist-name"></p>
+        </div>
+
+        <div>
+            <button id="play-track-button" class="btn btn-ghost justify-end absolute right-4 px-1 text-2xl">
+                ⏯️
+            </button>
+        </div>
+    </div>
+
+    </section>
+
+</main>
+
+<script>
+    let canClick = true;
+
+    function playTrack(id) {
+        if (!canClick) return;
+
+        const track = document.getElementById(id);
+        const playbutton = document.getElementById("play-track-button");
+
+        currentTrack = track;
+        
+        if (track.paused) {
+            track.play();
+            playbutton.innerHTML = "⏸️";
+        } else {
+            track.pause();
+            playbutton.innerHTML = "▶️";
+        }
+
+        showTrackInfo(id, track);
+
+        canClick = false;
+
+        setTimeout(() => {
+            canClick = true;
+        }, 100);
+    }
+
+    async function showTrackInfo(trackId, trackAudio) {
+
+        // Make request to tracks API
+        const res = await fetch(`https://audius.w3coins.io/v1/tracks/${trackId}`);
+        const track = await res.json();
+
+        // Remove hidden class
+        document.getElementById('track-info').classList.remove('hidden');
+
+        // Populate details
+        document.getElementById('track-name').innerText = track.data.title;
+        document.getElementById('artist-name').innerText = track.data.user.handle;
+        document.getElementById('play-track-button').addEventListener('click', () => {
+            playTrack(trackId);
+        });
+    
+
+    }
+</script>
+
+{% endblock %}

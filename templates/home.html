@@ -1,0 +1,21 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+        <section class="container mx-auto p-6">
+
+            <h1 class="text-3xl font-bold">Search Audius Library</h1>
+
+            <form class="form-control w-full max-w-xs" action="/search" method="POST">
+                <div class="form-control">
+                    <input type="text" name="query" placeholder="Enter artist, track or album..."
+                        class="input input-bordered">
+                </div>
+                <div class="form-control mt-6">
+                    <button class="btn btn-primary">Search</button>
+                </div>
+            </form>
+
+        </section>
+
+{% endblock %}
