@@ -36,7 +36,7 @@
         <p>No results found</p>
         {% endif %}
 
-    <div id="track-info" class="inset-x-1/4 flex hidden z-20 fixed bottom-0 my-4 mx-12 mx-auto rounded p-4 bg-primary">
+    <!-- div id="track-info" class="inset-x-1/4 flex hidden z-20 fixed bottom-0 my-4 mx-12 mx-auto rounded p-4 bg-primary">
         <div>
             <p id="track-name"></p>
             <p id="artist-name"></p>
@@ -47,58 +47,11 @@
                 ⏯️
             </button>
         </div>
-    </div>
+    </div-->
 
     </section>
 
 </main>
 
-<script>
-    let canClick = true;
-
-    function playTrack(id) {
-        if (!canClick) return;
-
-        const track = document.getElementById(id);
-        const playbutton = document.getElementById("play-track-button");
-
-        currentTrack = track;
-        
-        if (track.paused) {
-            track.play();
-            playbutton.innerHTML = "⏸️";
-        } else {
-            track.pause();
-            playbutton.innerHTML = "▶️";
-        }
-
-        showTrackInfo(id, track);
-
-        canClick = false;
-
-        setTimeout(() => {
-            canClick = true;
-        }, 100);
-    }
-
-    async function showTrackInfo(trackId, trackAudio) {
-
-        // Make request to tracks API
-        const res = await fetch(`https://audius.w3coins.io/v1/tracks/${trackId}`);
-        const track = await res.json();
-
-        // Remove hidden class
-        document.getElementById('track-info').classList.remove('hidden');
-
-        // Populate details
-        document.getElementById('track-name').innerText = track.data.title;
-        document.getElementById('artist-name').innerText = track.data.user.handle;
-        document.getElementById('play-track-button').addEventListener('click', () => {
-            playTrack(trackId);
-        });
-    
-
-    }
-</script>
 
 {% endblock %}
